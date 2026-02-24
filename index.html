@@ -32,7 +32,7 @@
 </head>
 <body>
 
-<h2>📷 Bộ sưu tập ảnh Firestore</h2>
+<h2>Quan ly anh vi pham</h2>
 <div id="gallery" class="gallery">⏳ Đang tải ảnh...</div>
 
 <!-- Modal xem ảnh lớn -->
@@ -78,7 +78,7 @@ async function loadAll(){
     count++;
   });
 
-  if(count===0) gallery.innerHTML="❗ Không có ảnh nào trong Firestore";
+  if(count===0) gallery.innerHTML=" Không có ảnh nào trong Firestore";
 }
 
 function showBig(src){
@@ -90,3 +90,4 @@ loadAll();
 </script>
 </body>
 </html>
+
