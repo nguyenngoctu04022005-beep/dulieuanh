@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Gallery ảnh Firestore</title>
+
+<style>
+  body{
+    text-align:center;font-family:Arial;background:#f0f2f5;padding:25px;
+  }
+  .gallery{
+    display:flex;flex-wrap:wrap;gap:15px;justify-content:center;margin-top:15px;
+  }
+  .item{
+    width:200px;cursor:pointer;border-radius:10px;
+    box-shadow:0 0 10px #bbb;transition:.2s;
+  }
+  .item:hover{transform:scale(1.08)}
+
+  /* Modal phóng to */
+  #viewer{
+    display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+    backdrop-filter:blur(4px);
+    background:rgba(0,0,0,0.80);
+    justify-content:center;align-items:center;z-index:1000;
+  }
+  #viewer img{
+    max-width:92%;max-height:92%;border-radius:12px;
+    box-shadow:0 0 20px #000;
+  }
+</style>
+</head>
+<body>
+
+<h2>📷 Bộ sưu tập ảnh Firestore</h2>
+<div id="gallery" class="gallery">⏳ Đang tải ảnh...</div>
+
+<!-- Modal xem ảnh lớn -->
+<div id="viewer" onclick="this.style.display='none'">
+  <img id="view-img">
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Firebase của mày
+const app = initializeApp({
+  apiKey: "AIzaSyBYROyA2TITWO2G-bUWaDda2C8prTBFwkE",
+  authDomain: "xetuhanh-f5e20.firebaseapp.com",
+  projectId: "xetuhanh-f5e20",
+});
+const db = getFirestore(app);
+
+/* ==== Tải toàn bộ ảnh ==== */
+async function loadAll(){
+  const ref = collection(db,"xu_ly_anh");
+  const querySnap = await getDocs(ref);
+
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = ""; // clear chữ loading
+
+  let count = 0;
+
+  querySnap.forEach(doc=>{
+    let data = doc.data();
+    if(!data.anh_base64) return;
+
+    let base64 = data.anh_base64.replace(/^"|"$/g,""); // xoá " thừa
+    let imgSrc = `data:image/png;base64,${base64}`;
+
+    let img = document.createElement("img");
+    img.src = imgSrc;
+    img.className="item";
+    img.onclick = ()=> showBig(imgSrc);
+
+    gallery.appendChild(img);
+    count++;
+  });
+
+  if(count===0) gallery.innerHTML="❗ Không có ảnh nào trong Firestore";
+}
+
+function showBig(src){
+  document.getElementById("view-img").src = src;
+  document.getElementById("viewer").style.display="flex";
+}
+
+loadAll();
+</script>
+</body>
+</html>
