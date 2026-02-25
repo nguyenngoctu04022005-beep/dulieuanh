@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Pi5 Climate Monitor</title>
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'Segoe UI', sans-serif;
+    background:linear-gradient(135deg,#1e3c72,#2a5298);
+    color:white;
+}
+
+.container{
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(10px);
+    padding:40px;
+    border-radius:20px;
+    width:380px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    text-align:center;
+}
+
+.card{
+    background:rgba(255,255,255,0.15);
+    padding:20px;
+    margin:15px 0;
+    border-radius:15px;
+}
+
+.value{
+    font-size:40px;
+    font-weight:bold;
+}
+</style>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA....",
+  authDomain: "xetuhanh-f5e20.firebaseapp.com",
+  databaseURL: "https://xetuhanh-f5e20-default-rtdb.firebaseio.com",
+  projectId: "xetuhanh-f5e20",
+  storageBucket: "xetuhanh-f5e20.appspot.com",
+  messagingSenderId: "123456789012",
+  appId: "1:123456789012:web:abcdef123456",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const sensorRef = ref(db, "/");
+
+onValue(sensorRef, (snapshot) => {
+    const data = snapshot.val();
+    if(!data) return;
+
+    document.getElementById("temp").textContent =
+        data.temperature ? data.temperature + " °C" : "--";
+
+    document.getElementById("hum").textContent =
+        data.humidity ? data.humidity + " %" : "--";
+});
+</script>
+
+</head>
+
+<body>
+
+<!-- NÚT SANG CAMERA -->
+<a href="index.html"
+   style="position:fixed;
+          top:20px;
+          right:20px;
+          padding:10px 15px;
+          background:#1e88e5;
+          color:white;
+          text-decoration:none;
+          border-radius:6px;
+          font-weight:bold;">
+   📷 Xem Camera
+</a>
+
+<div class="container">
+    <h2>Pi5 Climate Monitor</h2>
+
+    <div class="card">
+        <div>NHIỆT ĐỘ</div>
+        <div class="value" id="temp">--</div>
+    </div>
+
+    <div class="card">
+        <div>ĐỘ ẨM</div>
+        <div class="value" id="hum">--</div>
+    </div>
+</div>
+
+</body>
+</html>
